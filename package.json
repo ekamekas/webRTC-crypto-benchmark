@@ -1,0 +1,34 @@
+{
+  "name": "webrtc-crypto-benchmark",
+  "version": "0.1.0",
+  "description": "Bench-marking crypto algorithms in webRTC video call",
+  "main": "server.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint ./www ./server.js",
+    "unit": "./node_modules/.bin/jest",
+    "test": "./node_modules/.bin/eslint ./www && ./node_modules/.bin/jest",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ekamekas/webRTC-crypto-benchmark.git"
+  },
+  "keywords": [
+    "webRTC",
+    "DTLS"
+  ],
+  "author": "Mas Eka Setiawan",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/ekamekas/webRTC-crypto-benchmark/issues"
+  },
+  "homepage": "https://github.com/ekamekas/webRTC-crypto-benchmark#readme",
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "jest": "^22.1.4",
+    "socket.io": "^2.0.4"
+  },
+  "jest": {
+    "verbose": true
+  }
+}
