@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/assets/css/room.css">
+    <script src="/assets/bower_components/webrtc-adapter/release/adapter.js"></script>
+    <script src="/assets/js/socket.io.js"></script>
+    <script src="/assets/js/util.js"></script>
+    <script src="/assets/js/mediaconnection.js"></script>
+    <script src="/assets/js/signalling.js"></script>
+    <script src="/assets/js/peerconnection.js"></script>
+    <title>Room</title>
+</head>
+<body>
+    <!-- Main container -->
+    <div class="container" id="main-container">
+        <!-- Media container -->
+        <div id="media-container">
+            <!-- Local media -->
+            <div id="local-media-container">
+                <video src=""></video>
+            </div>
+            <!-- Remote media -->
+            <div id="remote-media-container">
+                <video src=""></video>
+            </div>
+        </div>  
+    </div>
+</body>
+<script>
+    // Setup variables
+
+    var localVideo = document.getElementById("local-media-container").querySelector("video");
+    var remoteVideo = document.getElementById("remote-media-container").querySelector("video");
+
+    // End setup variables
+
+    // Start define event listeners
+    
+    // End define event listeners
+
+    // Start define event handler
+
+    // End define event handler
+
+    // Start service
+    // Override media handler
+    MediaConnection.handler.onactive = function(){
+
+    };
+    MediaConnection.handler.onaddtrack = function(){
+        
+    };
+    MediaConnection.handler.oninactive = function(){
+        
+    };
+    MediaConnection.handler.onremotetrack = function(){
+        
+    };
+    // Start streaming
+    // MediaConnection.start(localVideo);
+
+    // End logic
+</script>
+</html>
