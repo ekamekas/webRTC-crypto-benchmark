@@ -52,24 +52,24 @@
                     </div>
                     <div id="quality-control-remote">
                         <p>Remote</p>
-                        <input type="radio" value="sd" checked=true name="quality-remote">SD</input>
-                        <input type="radio" value="hq" name="quality-remote">HQ</input>
-                        <input type="radio" value="hd" name="quality-remote">HD</input>
+                        <input type="radio" value="sd" name="quality-remote" disabled>SD</input>
+                        <input type="radio" value="hq" name="quality-remote" disabled>HQ</input>
+                        <input type="radio" value="hd" name="quality-remote" disabled>HD</input>
                     </div>
                 </div>
                 <!-- Media type control -->
                 <div id="type-control">
                     <div id="type-control-local">
                         <p>Local</p>
-                        <input type="radio" name="quality-local">Audio only</input>
+                        <input type="radio" name="quality-local" checked>Both</input>
                         <input type="radio" name="quality-local">Video only</input>
-                        <input type="radio" name="quality-local">Both</input>
+                        <input type="radio" name="quality-local">Audio only</input>
                     </div>
                     <div id="type-control-remote">
                         <p>Remote</p>
-                        <input type="radio" name="quality-remote">Audio only</input>
-                        <input type="radio" name="quality-remote">Video only</input>
-                        <input type="radio" name="quality-remote">Both</input>
+                        <input type="radio" name="quality-remote" disabled>Audio only</input>
+                        <input type="radio" name="quality-remote" disabled>Video only</input>
+                        <input type="radio" name="quality-remote" disabled>Both</input>
                     </div>
                 </div>
             </div>
@@ -202,13 +202,13 @@
     var onlocalqualitychange = function(quality){
         switch(quality){
             case "sd" :
-                MediaConnection.start(localVideo, Constraint.constraintsBuilder(Constraint.video.standard, Constraint.audio.default, Constraint.facemode.env));
+                mediaPeer(Constraint.constraintsBuilder(Constraint.video.standard, Constraint.audio.default, Constraint.facemode.env));
                 break;
             case "hq" :
-                MediaConnection.start(localVideo, Constraint.constraintsBuilder(Constraint.video.highQuality, Constraint.audio.default, Constraint.facemode.env));
+                mediaPeer(Constraint.constraintsBuilder(Constraint.video.highQuality, Constraint.audio.default, Constraint.facemode.env));
                 break;
             case "hd" :
-                MediaConnection.start(localVideo, Constraint.constraintsBuilder(Constraint.video.highDefinition, Constraint.audio.default, Constraint.facemode.env));
+                mediaPeer(Constraint.constraintsBuilder(Constraint.video.highDefinition, Constraint.audio.default, Constraint.facemode.env));
                 break;
             default :
                 console.log("Error");
@@ -232,34 +232,47 @@
     MediaConnection.handler.onremotetrack = function(){
         
     };
-    // Start streaming
-    MediaConnection.start(localVideo);
 
     // Signalling
     signalling.joinRoom();
 
+    // Register signal plane handler
     signalling.onMessage("room", (message) => {
         console.log(message);
     });
+    signalling.onMessage("offer", (offer) => {
+        console.log(offer);
+    });
+    signalling.onMessage("answer", (answer) => {
+        console.log(answer);
+    });
 
-    // Peerconnection
-    signallingMessage.type = "signalling-test"
-    signallingMessage.message = {
-        id : 1,
-        data : {
-            constraint : {
-                video : true,
-                audio : true
-            },
-            crypto : {
-                code : "RSA",
-                "key-length" : 2048
-            }
-        }
+    // Register peerconnection event handler
+    peerconnection.onoffer = function(offer){
+        console.log(offer)
     };
-
-    signalling.sendRoom(signallingMessage);
+    
+    peerconnection.onanswer = function(answer){
+        console.log(answer)
+    };
+  
+    // Peerconnection
+    mediaPeer();
 
     // End logic
+
+    // Additional function
+    function mediaPeer(constraint){
+        MediaConnection.start(localVideo, constraint).then(stream => {
+            peerconnection.createOffer(stream).then((offer) => {
+                return rtcPeerConnection.setLocalDescription(offer)
+            }).then(() => {
+                signallingMessage.type = "offer";
+                signallingMessage.message = rtcPeerConnection.localDescription;
+                signalling.sendRoom(signallingMessage);
+            });
+        });
+    }
+    // End additional function
 </script>
 </html>

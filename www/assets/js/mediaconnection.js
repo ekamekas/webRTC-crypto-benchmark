@@ -8,7 +8,7 @@ var MediaConnection = {
     start : function(videoDOM, constraint){
         if(constraint == undefined || constraint == null)
             constraint = Constraint.constraintsBuilder(Constraint.video.standard, Constraint.audio.default, Constraint.facemode.env);
-        navigator.mediaDevices.getUserMedia(constraint)
+        return navigator.mediaDevices.getUserMedia(constraint)
             .then((stream) => {
                 stream.onactive = MediaConnection.handler.onactive;
                 stream.oninactive = MediaConnection.handler.oninactive;
@@ -19,6 +19,10 @@ var MediaConnection = {
                     videoDOM.srcObject = MediaConnection.stream;
                     videoDOM.play();
                 }
+            }).then(() => {
+                return new Promise((resolve, reject) => {
+                    resolve(MediaConnection.stream);
+                });
             });
     },
     stream : null,
