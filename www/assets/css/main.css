@@ -1,0 +1,25 @@
+/* Styling general purposes */
+/* Import */
+@font-face {
+    font-family: "Quicksand";
+    src: url("/assets/fonts/Quicksand-Regular.ttf") format("ttf"),
+         url("/assets/fonts/Quicksand-Bold.ttf") format("ttf");
+}
+
+body {
+    margin: 0;
+    background-color: #64B5F6;
+}
+
+.container {
+    margin: 0;
+}
+
+#main-container {
+    display: flex;
+    flex-flow: column;
+    align-content: space-around;
+    height: 100vh;
+    width: 100vw;
+}
+
