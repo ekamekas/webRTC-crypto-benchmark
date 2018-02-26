@@ -53,10 +53,12 @@ io.on("connection", (socket) => {
         socket.join(room);
     });
 
-    socket.on("room", (message) => {
-        let room = message.room;
-        let data = message.data;
-        socket.to(room).emit("room", data);
+    socket.on("room", (req) => {
+        let room = req.room;
+        let type = req.data.type;
+        let message = req.data.message;
+        console.dir(req);
+        socket.to(room).emit(type, message);
     });
 
     socket.on("disconnect", () => {
