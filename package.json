@@ -25,10 +25,13 @@
   "homepage": "https://github.com/ekamekas/webRTC-crypto-benchmark#readme",
   "devDependencies": {
     "eslint": "^4.17.0",
-    "jest": "^22.1.4",
-    "socket.io": "^2.0.4"
+    "jest": "^22.1.4"
   },
   "jest": {
     "verbose": true
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4"
   }
 }

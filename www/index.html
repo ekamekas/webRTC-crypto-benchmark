@@ -4,9 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/index.css">
+    <title>webRTC-Crypto-Benchmark</title>
 </head>
 <body>
-    
+   <div class="container" id="main-container">
+        <!-- Big Title -->
+        <div id="big-title">
+            <h1>
+                webRTC Crypto <span>|</span> <span>[b]enchmark</span>
+            </h1>
+        </div>
+        <!-- Hyperlink -->
+        <div id="hyperlink">
+            <input type="text" pattern="[^0-9]" name="" id="roomInput" placeholder="Room number" value="1" required>
+            <div id="hyperlink-button">
+                <button id="masterButton">Master</button>
+                <button disabled="disabled">Slave</button>
+            </div>
+        </div>
+   </div> 
 </body>
+<script>
+    // Define DOM variables
+    var masterButton = document.getElementById("masterButton");
+    var roomNumber = document.getElementById("roomInput");
+
+    // Define listener
+    masterButton.addEventListener("click", () => {
+        location.pathname = "room/master/" + roomNumber.value;
+    })
+</script>
 </html>

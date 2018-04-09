@@ -1,0 +1,46 @@
+#main-container {
+    align-items: center;
+    justify-content: center;
+}
+
+#big-title {
+
+}
+
+#big-title h1 {
+    font-family: "Quicksand";
+    font-weight: 500;
+}
+
+#big-title h1 span {
+    font-weight: 300;
+}
+
+#hyperlink {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#hyperlink-button {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#hyperlink input[type="text"]{
+
+    border: 5px solid transparent;
+    border-radius: 2px;
+    margin-bottom: 5%;
+    text-align: center;
+
+}
+
+#hyperlink-button button{
+
+    margin: 0 2px;
+
+}
