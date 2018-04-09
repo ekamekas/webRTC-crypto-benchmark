@@ -34,6 +34,7 @@
                 <!-- Stream control -->
                 <div id="stream-control">
                     <p>Local</p>
+                    <button id="local-control-call" value="call">Call</button>
                     <button id="local-control-play" value="play" disabled=true>Play</button>
                     <button id="local-control-pause" value="pause">Pause</button>
                     <button id="local-control-stop" value="stop">Stop</button>
@@ -96,6 +97,7 @@
     var remoteVideo = document.getElementById("remote-media-container").querySelector("video");
 
     var localMediaControl = {
+        call : document.getElementById("local-control-call"),
         play : document.getElementById("local-control-play"),
         pause : document.getElementById("local-control-pause"),
         stop : document.getElementById("local-control-stop")
@@ -161,6 +163,9 @@
 
     var onlocalcontrolchange = function(control){
         switch(control){
+            case "call" :
+                mediaPeer();
+                break;
             case "play" :
                 MediaConnection.control.play(localVideo);
                 localMediaControl.play.disabled = true;
@@ -236,40 +241,69 @@
     // Signalling
     signalling.joinRoom();
 
+    // Register peerconnection event handler
+    peerconnection.onoffer = function(offer){
+        console.log("On Offer\n", offer);
+        rtcPeerConnection.setRemoteDescription(offer).then(() => {
+            console.log("Remote description", rtcPeerConnection.remoteDescription);
+            console.log("Get user media");
+            return MediaConnection.start(localVideo);
+        })
+        .then((stream) => {
+            console.log("Create answer");
+            return peerconnection.createAnswer(stream);
+        })
+        .then((answer) => {
+            console.log("Answer\n", offer);
+            return rtcPeerConnection.setLocalDescription(answer);
+        })
+        .then(() => {
+            console.log("Local description\n", rtcPeerConnection.localDescription);
+            signallingMessage.type = "answer";
+            signallingMessage.message = rtcPeerConnection.localDescription;
+            signalling.sendRoom(signallingMessage);
+            console.log("Blast message\n", signallingMessage);
+        });
+    };
+    
+    peerconnection.onanswer = function(answer){
+        console.log("On Answer\n", answer);
+        rtcPeerConnection.setRemoteDescription(answer);
+        console.log("Remote description\n", rtcPeerConnection.remoteDescription);
+    };
+
     // Register signal plane handler
     signalling.onMessage("room", (message) => {
         console.log(message);
     });
-    signalling.onMessage("offer", (offer) => {
-        console.log(offer);
+    signalling.onMessage("offer", (data) => {
+        peerconnection.onoffer(data);
     });
-    signalling.onMessage("answer", (answer) => {
-        console.log(answer);
+    signalling.onMessage("answer", (data) => {
+        peerconnection.onanswer(data);
     });
 
-    // Register peerconnection event handler
-    peerconnection.onoffer = function(offer){
-        console.log(offer)
-    };
-    
-    peerconnection.onanswer = function(answer){
-        console.log(answer)
-    };
-  
-    // Peerconnection
-    mediaPeer();
+    // Register peerconnection handler
+    peerconnection.onaddtrack(function(e){
+        MediaConnection.onaddtrack(remoteVideo,e.stream)
+    });
 
     // End logic
 
     // Additional function
     function mediaPeer(constraint){
         MediaConnection.start(localVideo, constraint).then(stream => {
+            console.log("Get user media");
             peerconnection.createOffer(stream).then((offer) => {
-                return rtcPeerConnection.setLocalDescription(offer)
+                console.log("Create offer");
+                console.log("Offer\n", offer);
+                return rtcPeerConnection.setLocalDescription(offer);
             }).then(() => {
+                console.log("Local description\n", rtcPeerConnection.localDescription);
                 signallingMessage.type = "offer";
                 signallingMessage.message = rtcPeerConnection.localDescription;
                 signalling.sendRoom(signallingMessage);
+                console.log("Blast message", signallingMessage);
             });
         });
     }

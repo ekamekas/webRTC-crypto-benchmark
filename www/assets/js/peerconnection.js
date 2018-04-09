@@ -20,14 +20,24 @@ var peerconnection = {
         });
         return rtcPeerConnection.createOffer();
     },
-    createAnswer : function(){
-        rtcPeerConnection.createAnswer().then((answer) => {
-            return rtcPeerConnection.setLocalDescription(answer);
+    createAnswer : function(stream){
+        this.addStream(stream);
+        return rtcPeerConnection.createAnswer();
+    },
+    addStream : function(stream){
+        stream.getTracks().forEach((track) => {
+            rtcPeerConnection.addTrack(track, stream);
         });
     },
     // Event handler
     onoffer : function(offer){
     },
     onanswer : function(answer){
+    },
+    onaddtrack : function(handler){
+        rtcPeerConnection.onaddstream = handler;
+    },
+    onremovetrack : function(handler){
+        rtcPeerConnection.onremovestream = handler;
     }
 };
