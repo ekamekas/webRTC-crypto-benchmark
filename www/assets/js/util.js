@@ -10,3 +10,7 @@ var loadFile = (callback) => {
     xobj.send(null);
 
 };
+
+var log = () => {
+    console.log();
+};

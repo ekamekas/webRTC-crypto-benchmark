@@ -26,6 +26,17 @@ var MediaConnection = {
             });
     },
     stream : null,
+    onaddtrack : function(videoDOM, stream){
+        stream.onactive = MediaConnection.handler.onactive;
+        stream.oninactive = MediaConnection.handler.oninactive;
+        stream.onaddtrack = MediaConnection.handler.onaddtrack;
+        stream.onremovetrack = MediaConnection.handler.onremovetrack;
+        MediaConnection.stream = stream;
+        if(videoDOM != undefined && videoDOM != null && videoDOM.nodeName.toLowerCase() == "video"){
+            videoDOM.srcObject = MediaConnection.stream;
+            videoDOM.play();
+        }
+    },
     handler : {
         onactive : function(){
 
