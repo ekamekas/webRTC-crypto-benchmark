@@ -3,7 +3,7 @@
  *  > [Add] Handle room message
  */
 
-const SERVER = "localhost:8081";
+const SERVER = "https://192.168.100.7:8081";
 const ROOM_NUMBER = window.location.pathname.split("/").pop();
 const SOCKET = io(SERVER);
 
