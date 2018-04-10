@@ -1,0 +1,100 @@
+@import "main.css";
+
+/* 
+    This stylesheet define style attributes for room html
+    content :
+        > Media container
+            > Local media container
+            > Remote media container
+        > Control container
+            > Media control
+                > Stream control
+                > Quality control
+                > Media type control
+            > Crypto controls
+
+*/
+
+/* Start media container definition */
+
+#media-container {
+
+    height: 75%;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    background-color: aliceblue;
+
+}
+
+#local-media-container {
+    max-width: 400px;
+    max-height: 400px;
+    background-color: coral;
+    margin: auto;
+}
+
+#local-media-container video {
+    width: 400px;
+    height: 400px;
+    background-color: coral;
+    margin: auto;            
+}
+
+#remote-media-container {
+    max-width: 400px;
+    max-height: 400px;
+    background-color: coral;
+    margin: auto;
+}
+
+#remote-media-container video {
+    width: 400px;
+    height: 400px;
+    background-color: coral;
+    margin: auto;
+}
+
+/* End media container definition */
+
+/* Start control container definition */
+
+#control-container {
+    height: 15%;
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+#control-container p {
+    margin: 25px 0 5px 0;
+}
+
+#media-control {
+    width: 50%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    margin: auto;
+}
+
+#stream-control {
+     margin: auto;
+}
+
+#quality-control {
+    margin: auto;
+}
+
+#type-control {
+    margin: auto;
+}
+
+#crypto-control {
+    width: 50%;
+    margin: auto;
+}
+
+/* End control container definition */

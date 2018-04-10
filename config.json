@@ -1,0 +1,19 @@
+{
+    "server":"https://localhost",
+    "port":8081,
+    "www" : {
+        "assets" : {
+            "root" : "www/assets"
+        },
+        "desktop" : {
+            "index" : "www/index.html",
+            "appMaster" : "www/master.html",
+            "appSlave" : "www/slave.html"
+        },
+        "mobile" : {
+            "index" : "www/index.html",
+            "appMaster" : "www/master.html",
+            "appSlave" : "www/slave.html"
+        }
+    }
+}
