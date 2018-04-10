@@ -1,10 +1,3 @@
-const express = require("express");
-const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-const fs = require("fs");
-const path = require("path");
-
 var express = require("express");
 var app = express();
 var fs = require("fs");
@@ -14,6 +7,8 @@ var httpsServer = server.createServer({
     cert:fs.readFileSync("config/ssl/cert.pem")
 }, app);
 var io = require("socket.io")(httpsServer);
+const path = require("path");
+
 const config = JSON.parse(fs.readFileSync("config.json"));
 const port = config.port || process.env.port || 8081 ;
 
