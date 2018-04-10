@@ -155,8 +155,8 @@ Signalling.joinRoom();
 // Register peerconnection event handler
 Peerconnection.onoffer = function(offer){
     console.log("On Offer\n", offer);
-    rtcPeerConnection.setRemoteDescription(offer).then(() => {
-        console.log("Remote description", rtcPeerConnection.remoteDescription);
+    Peerconnection.remoteDescription.set(offer).then(() => {
+        console.log("Remote description", Peerconnection.remoteDescription.get());
         console.log("Get user media");
         return MediaConnection.start(localVideo);
     })
@@ -166,12 +166,12 @@ Peerconnection.onoffer = function(offer){
     })
     .then((answer) => {
         console.log("Answer\n", offer);
-        return rtcPeerConnection.setLocalDescription(answer);
+        return Peerconnection.localDescription.set(answer);
     })
     .then(() => {
-        console.log("Local description\n", rtcPeerConnection.localDescription);
+        console.log("Local description\n", Peerconnection.localDescription.get());
         signallingMessage.type = "answer";
-        signallingMessage.message = rtcPeerConnection.localDescription;
+        signallingMessage.message = Peerconnection.localDescription.get();
         Signalling.sendRoom(signallingMessage);
         console.log("Blast message\n", signallingMessage);
     });
@@ -179,8 +179,8 @@ Peerconnection.onoffer = function(offer){
 
 Peerconnection.onanswer = function(answer){
     console.log("On Answer\n", answer);
-    rtcPeerConnection.setRemoteDescription(answer);
-    console.log("Remote description\n", rtcPeerConnection.remoteDescription);
+    Peerconnection.remoteDescription.set(answer);
+    console.log("Remote description\n", Peerconnection.remoteDescription.get());
 };
 
 // Register signal plane handler
@@ -196,6 +196,7 @@ Signalling.onMessage("answer", (data) => {
 
 // Register peerconnection handler
 Peerconnection.onaddtrack(function(e){
+    console.log("On add track");
     MediaConnection.onaddtrack(remoteVideo,e.stream)
 });
 
@@ -208,14 +209,15 @@ function mediaPeer(constraint){
         Peerconnection.createOffer(stream).then((offer) => {
             console.log("Create offer");
             console.log("Offer\n", offer);
-            return rtcPeerConnection.setLocalDescription(offer);
+            return Peerconnection.localDescription.set(offer);
         }).then(() => {
-            console.log("Local description\n", rtcPeerConnection.localDescription);
+            console.log("Local description\n", Peerconnection.localDescription.get());
             signallingMessage.type = "offer";
-            signallingMessage.message = rtcPeerConnection.localDescription;
+            signallingMessage.message = Peerconnection.localDescription.get();
             Signalling.sendRoom(signallingMessage);
             console.log("Blast message", signallingMessage);
         });
     });
 }
+
 // End additional function
