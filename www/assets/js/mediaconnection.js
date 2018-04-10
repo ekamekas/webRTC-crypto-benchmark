@@ -10,30 +10,30 @@ var MediaConnection = {
             constraint = Constraint.constraintsBuilder(Constraint.video.standard, Constraint.audio.default, Constraint.facemode.env);
         return navigator.mediaDevices.getUserMedia(constraint)
             .then((stream) => {
-                stream.onactive = MediaConnection.handler.onactive;
-                stream.oninactive = MediaConnection.handler.oninactive;
-                stream.onaddtrack = MediaConnection.handler.onaddtrack;
-                stream.onremovetrack = MediaConnection.handler.onremovetrack;
-                MediaConnection.stream = stream;
+                stream.onactive = this.handler.onactive;
+                stream.oninactive = this.handler.oninactive;
+                stream.onaddtrack = this.handler.onaddtrack;
+                stream.onremovetrack = this.handler.onremovetrack;
+                this.stream = stream;
                 if(videoDOM != undefined && videoDOM != null && videoDOM.nodeName.toLowerCase() == "video"){
-                    videoDOM.srcObject = MediaConnection.stream;
+                    videoDOM.srcObject = this.stream;
                     videoDOM.play();
                 }
             }).then(() => {
                 return new Promise((resolve, reject) => {
-                    resolve(MediaConnection.stream);
+                    resolve(this.stream);
                 });
             });
     },
     stream : null,
     onaddtrack : function(videoDOM, stream){
-        stream.onactive = MediaConnection.handler.onactive;
-        stream.oninactive = MediaConnection.handler.oninactive;
-        stream.onaddtrack = MediaConnection.handler.onaddtrack;
-        stream.onremovetrack = MediaConnection.handler.onremovetrack;
-        MediaConnection.stream = stream;
+        stream.onactive = this.handler.onactive;
+        stream.oninactive = this.handler.oninactive;
+        stream.onaddtrack = this.handler.onaddtrack;
+        stream.onremovetrack = this.handler.onremovetrack;
+        this.stream = stream;
         if(videoDOM != undefined && videoDOM != null && videoDOM.nodeName.toLowerCase() == "video"){
-            videoDOM.srcObject = MediaConnection.stream;
+            videoDOM.srcObject = this.stream;
             videoDOM.play();
         }
     },
@@ -57,7 +57,7 @@ var MediaConnection = {
             if(videoDOM.nodeName.toLowerCase() != "video")
                 return "Not video DOM";
             if(videoDOM.srcObject == null)
-                videoDOM.srcObject = MediaConnection.stream;
+                videoDOM.srcObject = this.stream;
             videoDOM.play();
         },
         pause : function(videoDOM){
@@ -68,7 +68,7 @@ var MediaConnection = {
         stop : function(videoDOM){
             if(videoDOM.nodeName.toLowerCase() != "video")
                 return "Not video DOM";
-            MediaConnection.stream.getTracks().forEach((track) => {
+            this.stream.getTracks().forEach((track) => {
                 track.stop();
             });
             videoDOM.srcObject = null;
@@ -129,3 +129,5 @@ const Constraint = {
         return result;
     }
 };
+
+export default {MediaConnection} = MediaConnection;
