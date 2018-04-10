@@ -1,13 +1,10 @@
-/*
- *  TODO:
- *  > [Add] Handle room message
- */
+import Constant from '../config/Constant.js';
 
-const SERVER = "https://192.168.100.7:8081";
+const SERVER = Constant.SERVER.HTTP;
 const ROOM_NUMBER = window.location.pathname.split("/").pop();
 const SOCKET = io(SERVER);
 
-var signalling = {
+var Signalling = {
     sendMessage : function(name, message){
         if(SOCKET == null || SOCKET == undefined){
             alert("Socket not found");
@@ -25,7 +22,7 @@ var signalling = {
             room : room,
             data : message
         };
-        signalling.sendMessage("room", data);
+        this.sendMessage("room", data);
     },
     onMessage : function(name, handler){
         if(SOCKET == null || SOCKET == undefined){
@@ -43,6 +40,8 @@ var signalling = {
             alert("Socket not found");
             return;
         }
-        signalling.sendMessage("join", room);
+        this.sendMessage("join", room);
     }
 };
+
+export default {Signalling} = Signalling;
