@@ -1,6 +1,6 @@
 import Constant from '../config/Constant.js';
 
-const SERVER = Constant.SERVER.HTTP;
+const SERVER = Constant.SERVER.HTTPS;
 const ROOM_NUMBER = window.location.pathname.split("/").pop();
 const SOCKET = io(SERVER);
 

@@ -5,8 +5,8 @@ const Constant = {
         ANSWER : "answer"
     },
     SERVER : {
-        HTTP : "http://webrtc.laman.local:8081",
-        HTTPS : "https://webrtc.laman.local:8081"
+        HTTP : "http://192.168.100.7:8081",
+        HTTPS : "https://192.168.100.7:8081"
     }
 
 };
