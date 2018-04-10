@@ -1,14 +1,12 @@
-// TODO:
-// > [Add] Room message handler
+const express = require("express");
+const app = express();
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+const fs = require("fs");
+const path = require("path");
 
-var express = require("express");
-var app = express();
-var server = require("http").Server(app);
-var io = require("socket.io")(server);
-var fs = require("fs");
-
-var config = JSON.parse(fs.readFileSync("config.json"));
-var port = process.env.port || 8081 || config.port;
+const config = JSON.parse(fs.readFileSync("config.json"));
+const port = config.port || process.env.port || 8081 ;
 
 var socketMap = new Map();  // List user beserta objek socket
 
@@ -16,23 +14,23 @@ server.listen(port, () => {
     console.log("Listening at " + port);
 });
 
-app.use("/assets", express.static("www/assets"));
+app.use("/assets", express.static(config.www.assets.root));
 
 app.route("/")
     .get((req, res) => {
-        res.sendFile(__dirname + "/www/index.html");
+        res.sendFile(path.join(__dirname, config.www.desktop.index));
     });
 
 app.route("/room/master/:roomId")
     .get((req, res) => {
         // Send room client html file
-        res.sendFile(__dirname + "/www/master.html");
+        res.sendFile(path.join(__dirname, config.www.desktop.appMaster));
     });
 
 app.route("/room/slave/:roomId")
     .get((req, res) => {
         // Send room client html file
-        res.sendFile(__dirname + "/www/slave.html");
+        res.sendFile(path.join(__dirname, config.www.desktop.appSlave));
     });
 
 io.on("connection", (socket) => {
