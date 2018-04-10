@@ -11,7 +11,7 @@ const rtcPeerConnection = new RTCPeerConnection({
     ]
 });
 
-var peerconnection = {
+var Peerconnection = {
     createOffer : function(stream){
         if(stream == null || stream == undefined)
             return;
@@ -41,3 +41,5 @@ var peerconnection = {
         rtcPeerConnection.onremovestream = handler;
     }
 };
+
+export {Peerconnection,rtcPeerConnection};
