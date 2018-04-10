@@ -6,7 +6,7 @@ const Constant = {
     },
     SERVER : {
         HTTP : "http://webrtc.laman.local:8081",
-        HTTPS : "https://webrtc.laman.local:8082"
+        HTTPS : "https://webrtc.laman.local:8081"
     }
 
 };
