@@ -1,6 +1,7 @@
 import Signalling from './signalling.js';
 import MediaConnection from './mediaconnection.js';
-import {Peerconnection,rtcPeerConnection} from './peerconnection.js';
+import {Peerconnection} from './peerconnection.js';
+import Constant from '../config/Constant.js';
 
 // Setup variables
 
@@ -22,6 +23,8 @@ var localMediaQualityList = document.getElementById("quality-control-local").que
 var remoteMediaQualityList = document.getElementById("quality-control-remote").querySelectorAll("input");
 var localMediaTypeList = document.getElementById("type-control-local").querySelectorAll("input");
 var remoteMediaTypeList = document.getElementById("type-control-remote").querySelectorAll("input");
+
+var cryptoTypeList = document.getElementById("crypto-control").querySelectorAll("input");
 
 var signallingMessage = {
     type : "",
@@ -68,11 +71,20 @@ remoteMediaTypeList.forEach((type) => {
     })
 });
 
+// Crypto type list
+cryptoTypeList.forEach((type) => {
+    type.addEventListener("click", (e) => {
+        // Crypto radio button click handler
+        oncryptochange(e.target.name, e.target.value);
+    })
+})
+
 // End define event listeners
 
 // Start define event handler
 
 var onlocalcontrolchange = function(control){
+    console.log("Control change :", control);
     switch(control){
         case "call" :
             mediaPeer();
@@ -116,6 +128,7 @@ var onremotecontrolchange = function(control){
 };
 
 var onlocalqualitychange = function(quality){
+    console.log("Quality change :", quality);
     switch(quality){
         case "sd" :
             mediaPeer(Constraint.constraintsBuilder(Constraint.video.standard, Constraint.audio.default, Constraint.facemode.env));
@@ -131,6 +144,56 @@ var onlocalqualitychange = function(quality){
             break;
     }
 };
+
+var oncryptochange = function(crypto, size){
+    console.log("Crypto change :", crypto, size);
+    let algorithmIdentifier = {};
+    
+    if(crypto == "crypto-rsa"){
+        switch(Number(size)){
+            case Constant.CRYPTO.KEYSIZE.KEY_1024 :
+                Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_1024;
+                break;
+            case Constant.CRYPTO.KEYSIZE.KEY_2048 :
+                Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_2048;
+                break;
+            case Constant.CRYPTO.KEYSIZE.KEY_4096 :
+                Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_4096;
+                break;
+            default :
+                throw console.error("Keysize tidak sesuai");
+                break;
+        }
+        algorithmIdentifier = Constant.CRYPTO.RSA.ALGORITHM_ID;
+    } else if(crypto == "crypto-ecdsa"){
+        switch(Number(size)){
+            case Constant.CRYPTO.KEYSIZE.KEY_256 :
+                Constant.CRYPTO.ECDSA.ALGORITHM_ID.NAMED_CURVE = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_256;
+                break;
+            case Constant.CRYPTO.KEYSIZE.KEY_384 :
+                Constant.CRYPTO.ECDSA.ALGORITHM_ID.NAMED_CURVE = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_384;
+                break;
+            case Constant.CRYPTO.KEYSIZE.KEY_521 :
+                Constant.CRYPTO.ECDSA.ALGORITHM_ID.NAMED_CURVE = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_521;
+                break;  
+            default :
+                throw console.error("Keysize tidak sesuai");
+        }
+        algorithmIdentifier = Constant.CRYPTO.ECDSA.ALGORITHM_ID;
+    }
+    else
+        throw console.error("Kode tidak sesuai");
+
+    console.log("BEFORE :", Peerconnection.rtcPeerConnection.getRtcPeerConnection());
+    console.log("Crypto algorithm :", algorithmIdentifier);
+    console.log("Re-initiate webRTC...")
+    Peerconnection.rtcPeerConnection.setCertificates(algorithmIdentifier);
+    Peerconnection.rtcPeerConnection.setRtcPeerConnection().then(() => {
+        console.log("AFTER :", Peerconnection.rtcPeerConnection.getRtcPeerConnection());
+        throw console.error("EXIT WITH SMILE :)");
+    })
+        
+}
 
 // End define event handler
 
@@ -204,19 +267,23 @@ Peerconnection.onaddtrack(function(e){
 
 // Additional function
 function mediaPeer(constraint){
-    MediaConnection.start(localVideo, constraint).then(stream => {
-        console.log("Get user media");
-        Peerconnection.createOffer(stream).then((offer) => {
-            console.log("Create offer");
-            console.log("Offer\n", offer);
-            return Peerconnection.localDescription.set(offer);
-        }).then(() => {
-            console.log("Local description\n", Peerconnection.localDescription.get());
-            signallingMessage.type = "offer";
-            signallingMessage.message = Peerconnection.localDescription.get();
-            Signalling.sendRoom(signallingMessage);
-            console.log("Blast message", signallingMessage);
-        });
+    console.log("Create peer connection...");
+    Peerconnection.rtcPeerConnection.setRtcPeerConnection().then(() => {
+        return MediaConnection.start(localVideo, constraint)
+    })
+    .then(stream => {
+        console.log("Create offer");
+        return Peerconnection.createOffer(stream);
+    }).then((offer) => {
+        console.log("Offer\n", offer);
+        console.log("Create local description", offer);
+        return Peerconnection.localDescription.set(offer);
+    }).then(() => {
+        console.log("Local description\n", Peerconnection.localDescription.get());
+        signallingMessage.type = "offer";
+        signallingMessage.message = Peerconnection.localDescription.get();
+        Signalling.sendRoom(signallingMessage);
+        console.log("Blast message", signallingMessage);
     });
 }
 
