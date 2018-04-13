@@ -168,13 +168,13 @@ var oncryptochange = function(crypto, size){
     } else if(crypto == "crypto-ecdsa"){
         switch(Number(size)){
             case Constant.CRYPTO.KEYSIZE.KEY_256 :
-                Constant.CRYPTO.ECDSA.ALGORITHM_ID.NAMED_CURVE = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_256;
+                Constant.CRYPTO.ECDSA.ALGORITHM_ID.namedCurve = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_256;
                 break;
             case Constant.CRYPTO.KEYSIZE.KEY_384 :
-                Constant.CRYPTO.ECDSA.ALGORITHM_ID.NAMED_CURVE = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_384;
+                Constant.CRYPTO.ECDSA.ALGORITHM_ID.namedCurve = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_384;
                 break;
             case Constant.CRYPTO.KEYSIZE.KEY_521 :
-                Constant.CRYPTO.ECDSA.ALGORITHM_ID.NAMED_CURVE = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_521;
+                Constant.CRYPTO.ECDSA.ALGORITHM_ID.namedCurve = Constant.CRYPTO.ECDSA.NAMED_CURVE.P_521;
                 break;  
             default :
                 throw console.error("Keysize tidak sesuai");
@@ -184,14 +184,42 @@ var oncryptochange = function(crypto, size){
     else
         throw console.error("Kode tidak sesuai");
 
-    console.log("BEFORE :", Peerconnection.rtcPeerConnection.getRtcPeerConnection());
+    console.log("BEFORE Re-initiate :", Peerconnection.rtcPeerConnection.getRtcPeerConnection());
+    console.log("Closing RTCPeerConnection", Peerconnection.rtcPeerConnection.closeRtcPeerConnection());
     console.log("Crypto algorithm :", algorithmIdentifier);
-    console.log("Re-initiate webRTC...")
-    Peerconnection.rtcPeerConnection.setCertificates(algorithmIdentifier);
-    Peerconnection.rtcPeerConnection.setRtcPeerConnection().then(() => {
-        console.log("AFTER :", Peerconnection.rtcPeerConnection.getRtcPeerConnection());
-        throw console.error("EXIT WITH SMILE :)");
+    console.log("Re-initiate RTCPeerConnection...")
+    Peerconnection.rtcPeerConnection.setCertificates(algorithmIdentifier).then(() => {
+        return new Promise((resolve, reject) => {
+            console.log("AFTER Re-initiate :", Peerconnection.rtcPeerConnection.getRtcPeerConnection());
+            signallingMessage.type = "re-initiate";
+            signallingMessage.message = {
+                RTCPeerConnection : Peerconnection.rtcPeerConnection.getRtcPeerConnection(),
+                CertAlgorithm : algorithmIdentifier
+            };
+            console.log("Blast message", signallingMessage);    
+            Signalling.sendRoom(signallingMessage);
+            resolve();
+        });
+    }).then(() => {
+        mediaPeer();
     })
+    // Peerconnection.rtcPeerConnection.setRtcPeerConnection().then(() => {
+    //     // Register peerconnection handler
+    //     Peerconnection.onaddtrack(function(e){
+    //         console.log("On add track");
+    //         MediaConnection.onaddtrack(remoteVideo,e.stream)
+    //     });
+    //     console.log("AFTER Re-initiate :", Peerconnection.rtcPeerConnection.getRtcPeerConnection());
+    //     signallingMessage.type = "re-initiate";
+    //     signallingMessage.message = {
+    //         RTCPeerConnection : Peerconnection.rtcPeerConnection.getRtcPeerConnection(),
+    //         CertAlgorithm : algorithmIdentifier
+    //     };
+    //     console.log("Blast message", signallingMessage);    
+    //     Signalling.sendRoom(signallingMessage);
+    //     mediaPeer();
+    //     // throw console.error("EXIT WITH SMILE :)");
+    // })
         
 }
 
@@ -256,6 +284,10 @@ Signalling.onMessage("offer", (data) => {
 Signalling.onMessage("answer", (data) => {
     Peerconnection.onanswer(data);
 });
+Signalling.onMessage("re-initiate", (data) => {
+    console.log("On RTCPeerConnection re-initiate...");
+    console.log(data);
+})
 
 // Register peerconnection handler
 Peerconnection.onaddtrack(function(e){
@@ -269,6 +301,11 @@ Peerconnection.onaddtrack(function(e){
 function mediaPeer(constraint){
     console.log("Create peer connection...");
     Peerconnection.rtcPeerConnection.setRtcPeerConnection().then(() => {
+        // Register peerconnection handler
+        Peerconnection.onaddtrack(function(e){
+            console.log("On add track");
+            MediaConnection.onaddtrack(remoteVideo,e.stream)
+        });
         return MediaConnection.start(localVideo, constraint)
     })
     .then(stream => {

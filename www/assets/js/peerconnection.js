@@ -22,7 +22,10 @@ var Peerconnection = {
                     this.getCertificates()
                 ).then(function(cert) {
                     console.log("Certificate :", cert)
-                    rtcPeerConnection = new RTCPeerConnection({certificates: [cert]});
+                    rtcPeerConnection = new RTCPeerConnection({
+                        'iceServer' : Constant.ICE_SERVER,
+                        'certificates' : [cert]
+                    });
                     Peerconnection.onaddtrack = function(handler){
                         rtcPeerConnection.onaddstream = handler;
                     }
@@ -37,6 +40,9 @@ var Peerconnection = {
         getRtcPeerConnection : function(){
             return rtcPeerConnection;
         },
+        closeRtcPeerConnection : function(){
+            rtcPeerConnection.close();
+        },
         setIceServer : function(iceConfiguration){
             this.configuration.iceServer = iceConfiguration;
         },
@@ -44,7 +50,10 @@ var Peerconnection = {
             return this.configuration.iceServer;
         },
         setCertificates : function(certConfiguration){
-            this.configuration.certificates = certConfiguration;
+            return new Promise((resolve, reject) => {
+                this.configuration.certificates = certConfiguration;
+                resolve();
+            })
         },
         getCertificates : function(){
             return this.configuration.certificates || {};
@@ -89,8 +98,10 @@ var Peerconnection = {
     onanswer : function(answer){
     },
     onaddtrack : function(handler){
+        rtcPeerConnection.onaddstream = handler;
     },
     onremovetrack : function(handler){
+        rtcPeerConnection.onremovestream = handler;
     }
 };
 
