@@ -62,7 +62,7 @@ remoteMediaQualityList.forEach((quality) => {
 // Media type listener
 localMediaTypeList.forEach((type) => {
     type.addEventListener("click", (e) => {
-        // Type radio button click handler
+        onlocalmediatypechange(type.value);
     })
 });
 remoteMediaTypeList.forEach((type) => {
@@ -144,6 +144,24 @@ var onlocalqualitychange = function(quality){
             break;
     }
 };
+
+var onlocalmediatypechange = function(type){
+    console.log("Type change :", type);
+    switch(type){
+        case "Video only" :
+            mediaPeer(Constraint.constraintsBuilder(Constraint.video.standard, Constraint.audio.disable, Constraint.facemode.env));
+            break;
+        case "Audio only" :
+            mediaPeer(Constraint.constraintsBuilder(Constraint.video.disable, Constraint.audio.default, Constraint.facemode.env));
+            break;
+        case "Both" :
+            mediaPeer(Constraint.constraintsBuilder(Constraint.video.standard, Constraint.audio.default, Constraint.facemode.env));
+            break;
+        default :
+            console.log("Error");
+            break;
+    }
+}
 
 var oncryptochange = function(crypto, size){
     console.log("Crypto change :", crypto, size);
