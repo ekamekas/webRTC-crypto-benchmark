@@ -98,11 +98,17 @@ const Constraint = {
                 height : 720,
                 aspectRation : 1.777777778
             }
+        },
+        disable : {
+            video : false
         }
     },
     audio : {
         default : {
             audio : true
+        },
+        disable : {
+            audio : false
         }
     },
     facemode : {
