@@ -3,10 +3,10 @@ var app = express();
 var fs = require("fs");
 var server = require("https");
 var httpsServer = server.createServer({
-    key:fs.readFileSync("config/ssl/key.pem"),
-    cert:fs.readFileSync("config/ssl/cert.pem")
+    key:fs.readFileSync("config/ssl/webrtc.laman.local.key"),
+    cert:fs.readFileSync("config/ssl/webrtc.laman.local.crt")
 }, app);
-var io = require("socket.io")(httpsServer);
+var io = require("socket.io")(httpsServer, {secure: true});
 const path = require("path");
 
 const config = JSON.parse(fs.readFileSync("config.json"));
