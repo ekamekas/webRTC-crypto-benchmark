@@ -5,12 +5,12 @@ const Constant = {
         ANSWER : "answer"
     },
     SERVER : {
-        HTTP : "http://192.168.100.7:8081",
-        HTTPS : "https://192.168.100.7:8081"
+        HTTP : "http://192.168.43.5:8081",
+        HTTPS : "https://192.168.43.5:8081"
     },
     ICE_SERVER : [
         {
-            'urls':'stun:stun.example.org'
+            'urls':'stun.l.google.com:19302'
         }
     ],
     CRYPTO : {
