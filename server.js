@@ -1,8 +1,12 @@
-const express = require("express");
-const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-const fs = require("fs");
+var express = require("express");
+var app = express();
+var fs = require("fs");
+var server = require("https");
+var httpsServer = server.createServer({
+    key:fs.readFileSync("config/ssl/webrtc.laman.local.key"),
+    cert:fs.readFileSync("config/ssl/webrtc.laman.local.crt")
+}, app);
+var io = require("socket.io")(httpsServer, {secure: true});
 const path = require("path");
 
 const config = JSON.parse(fs.readFileSync("config.json"));
