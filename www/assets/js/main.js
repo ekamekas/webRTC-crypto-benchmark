@@ -175,8 +175,17 @@ var oncryptochange = function(crypto, size){
             case Constant.CRYPTO.KEYSIZE.KEY_2048 :
                 Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_2048;
                 break;
+            case Constant.CRYPTO.KEYSIZE.KEY_3072 :
+                Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_3072;
+                break;
             case Constant.CRYPTO.KEYSIZE.KEY_4096 :
                 Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_4096;
+                break;
+            case Constant.CRYPTO.KEYSIZE.KEY_7680 :
+                Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_7680;
+                break;
+            case Constant.CRYPTO.KEYSIZE.KEY_15360 :
+                Constant.CRYPTO.RSA.ALGORITHM_ID.modulusLength = Constant.CRYPTO.KEYSIZE.KEY_15360;
                 break;
             default :
                 throw console.error("Keysize tidak sesuai");
